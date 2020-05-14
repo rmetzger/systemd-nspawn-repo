@@ -29,11 +29,11 @@ jobs:
         set -x
         sudo apt-get update
         sudo apt-get install -y debootstrap systemd-container
-        sudo debootstrap xenial ~/ubuntu-xenial-tree/ http://archive.ubuntu.com/ubuntu/
-        sudo systemd-nspawn -D ~/ubuntu-xenial-tree/
+        sudo debootstrap xenial /var/lib/machines/ubuntu-xenial/ http://archive.ubuntu.com/ubuntu/
+        sudo systemd-nspawn -D /var/lib/machines/ubuntu-xenial/
         sudo machinectl list-images
 
-        sudo machinectl export-tar ubuntu-xenial-tree ubuntu-xenial.gz
+        sudo machinectl export-tar ubuntu-xenial ubuntu-xenial.gz
         sudo machinectl list-transfers
         echo "what else is here?"
         ls -lisah

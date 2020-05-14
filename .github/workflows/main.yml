@@ -26,6 +26,7 @@ jobs:
     - name: Run a multi-line script
       timeout-minutes: 5
       run: |
+        sudo apt-get update
         sudo apt-get install -y debootstrap
         sudo debootstrap unstable ~/debian-tree/
         sudo systemd-nspawn -D ~/debian-tree/

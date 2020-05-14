@@ -28,7 +28,13 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y debootstrap systemd-container
-        sudo debootstrap unstable ~/debian-tree/
-        sudo systemd-nspawn -D ~/debian-tree/
+        sudo debootstrap xenial --no-check-gpg ~/ubuntu-xenial-tree/ http://archive.ubuntu.com/ubuntu/
+        sudo systemd-nspawn -D ~/ubuntu-xenial-tree/
+        sudo machinectl export-tar ubuntu-xenial.gz
+        ls -lisah
         #sudo debootstrap --variant=buildd --arch i386 hardy /var/chroot/hardy http://archive.ubuntu.com/ubuntu/
-        
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        # Artifact name
+        path: ubuntu-xenial.gz

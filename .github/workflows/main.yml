@@ -29,31 +29,34 @@ jobs:
         set -x
         sudo apt-get update
         sudo apt-get install -y debootstrap systemd-container
-        sudo debootstrap xenial /var/lib/machines/ubuntu-xenial/ http://archive.ubuntu.com/ubuntu/
+        sudo debootstrap --variant=buildd --no-check-gpg xenial /var/lib/machines/ubuntu-xenial/ http://archive.ubuntu.com/ubuntu/
         sudo systemd-nspawn -D /var/lib/machines/ubuntu-xenial/
         sudo machinectl list-images
 
         sudo machinectl export-tar ubuntu-xenial ubuntu-xenial.gz
-        sudo machinectl list-transfers
-        echo "what else is here?"
-        ls -lisah
-        find .
 
-        sleep 5 
-        sudo machinectl list-transfers
-
-        ls -lisah
-        find .
-
-        sleep 60
-        sudo machinectl list-transfers
-        ls -lisah
-        find .
-        
-
-        #sudo debootstrap --variant=buildd --arch i386 hardy /var/chroot/hardy http://archive.ubuntu.com/ubuntu/
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        # Artifact name
-        path: ubuntu-xenial.gz
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./ubuntu-xenial.gz
+        asset_name: ubuntu-xenial.gz
+        asset_content_type: application/gzip
+#    - name: Upload a Build Artifact
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: ubuntu-xenial.gz
+#        path: ubuntu-xenial.gz

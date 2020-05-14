@@ -27,6 +27,7 @@ jobs:
       timeout-minutes: 5
       run: |
         sudo -s
+        apt install -y debootstrap
         debootstrap unstable ~/debian-tree/
         systemd-nspawn -D ~/debian-tree/
         #sudo debootstrap --variant=buildd --arch i386 hardy /var/chroot/hardy http://archive.ubuntu.com/ubuntu/
